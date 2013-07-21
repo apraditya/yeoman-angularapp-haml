@@ -29,6 +29,10 @@ module.exports = function (grunt) {
   grunt.initConfig({
     yeoman: yeomanConfig,
     watch: {
+      haml: {
+        files: ['<%= yeoman.app %>/views/{,*/}*.haml'],
+        tasks: ['haml:dist']
+      },
       coffee: {
         files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
         tasks: ['coffee:dist']
@@ -47,6 +51,7 @@ module.exports = function (grunt) {
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
+          '{.tmp,<%= yeoman.app %>}/views/{,*/}*.html',
           '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
           '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
@@ -134,6 +139,20 @@ module.exports = function (grunt) {
           src: '{,*/}*.coffee',
           dest: '.tmp/spec',
           ext: '.js'
+        }]
+      }
+    },
+    haml: {
+      options: {
+        language: 'ruby'
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.app %>/views',
+          src: '{,*/}*.haml',
+          dest: '.tmp/views',
+          ext: '.html'
         }]
       }
     },
@@ -260,15 +279,18 @@ module.exports = function (grunt) {
     concurrent: {
       server: [
         'coffee:dist',
+        'haml:dist',
         'compass:server'
       ],
       test: [
         'coffee',
+        'haml',
         'compass'
       ],
       dist: [
         'coffee',
         'compass:dist',
+        'haml:dist',
         'imagemin',
         'htmlmin'
       ]
